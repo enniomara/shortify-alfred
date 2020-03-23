@@ -57,7 +57,7 @@
 			<key>config</key>
 			<dict>
 				<key>alfredfiltersresults</key>
-				<true/>
+				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
 				<integer>0</integer>
 				<key>argumenttrimmode</key>
@@ -79,7 +79,8 @@
 				<key>runningsubtext</key>
 				<string></string>
 				<key>script</key>
-				<string></string>
+				<string>export query="$1"
+./fuzzy.py ./alfred.py</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -89,7 +90,7 @@
 				<key>title</key>
 				<string>Shortify search</string>
 				<key>type</key>
-				<integer>8</integer>
+				<integer>0</integer>
 				<key>withspace</key>
 				<true/>
 			</dict>
@@ -185,7 +186,7 @@
 		<string>shortify_url</string>
 	</array>
 	<key>version</key>
-	<string>0.0.1</string>
+	<string>0.0.2</string>
 	<key>webaddress</key>
 	<string></string>
 </dict>
