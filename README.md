@@ -1,12 +1,15 @@
 # Shortify - Alfred
 
-This is an Alfred (tested on v3) workflow that allows searching shortify.
+This is an [Alfred](https://www.alfredapp.com/) (tested on v3) workflow that
+allows searching [shortify](https://github.com/enniomara/shortify).
 
-This workflow shows all shortcuts stored in shortify.
+This workflow shows all shortcuts stored in
+[shortify](https://github.com/enniomara/shortify).
 
 ## Installation
 
-Install it by downloading the `.workflow` file from the releases page.
+Install it by downloading the `.workflow` file from the
+[releases](https://github.com/enniomara/shortify-alfred/releases) page.
 
 ## Initialization
 
