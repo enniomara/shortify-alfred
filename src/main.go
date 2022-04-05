@@ -5,11 +5,7 @@ import (
 	"github.com/enniomara/shortify-alfred/cachedentries"
 )
 
-var (
-	wf           *aw.Workflow
-	query        string
-	shouldUpdate bool
-)
+var wf *aw.Workflow
 
 func init() {
 	wf = aw.New()
