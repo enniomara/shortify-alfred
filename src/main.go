@@ -2,6 +2,7 @@ package main
 
 import (
 	aw "github.com/deanishe/awgo"
+	"github.com/enniomara/shortify-alfred/cachedentries"
 )
 
 var (
@@ -17,6 +18,10 @@ func init() {
 func main() {
 	wf.Run(func() {})
 
+	entries := cachedentries.GetEntries()
+	for _, entry := range entries {
+		wf.NewItem(entry.Name)
+	}
 	wf.WarnEmpty("No matching items", "Try something different")
 	wf.SendFeedback()
 }
