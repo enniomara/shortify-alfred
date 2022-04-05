@@ -15,13 +15,15 @@ func init() {
 	wf = aw.New()
 }
 
-func main() {
-	wf.Run(func() {})
-
+func run() {
 	entries := cachedentries.GetEntries()
 	for _, entry := range entries {
 		wf.NewItem(entry.Name)
 	}
 	wf.WarnEmpty("No matching items", "Try something different")
 	wf.SendFeedback()
+}
+
+func main() {
+	wf.Run(run)
 }
