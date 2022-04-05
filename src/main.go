@@ -4,13 +4,19 @@ import (
 	"log"
 
 	aw "github.com/deanishe/awgo"
+	"github.com/enniomara/shortify-alfred/actions"
 	"github.com/enniomara/shortify-alfred/cachedentries"
 )
 
 var wf *aw.Workflow
 
 func init() {
-	wf = aw.New()
+	updateMagic := aw.AddMagic(actions.NewUpdateAction(func() error {
+		log.Printf("Running from main")
+		return nil
+	}))
+
+	wf = aw.New(updateMagic)
 }
 
 func run() {
