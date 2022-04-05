@@ -10,11 +10,11 @@ import (
 )
 
 var wf *aw.Workflow
+var endpoint string
 
 func init() {
-	config := aw.NewConfig()
 	updateMagic := aw.AddMagic(actions.NewUpdateAction(func() error {
-		apiEntries, err := api.GetEntries(config.Get("shortify_url"))
+		apiEntries, err := api.GetEntries(endpoint)
 		if err != nil {
 			return err
 		}
@@ -31,6 +31,13 @@ func init() {
 
 func run() {
 	query := wf.Args()[0]
+
+	config := aw.NewConfig()
+	endpointUrl := config.Get("shortify_url")
+	if endpointUrl == "" {
+		wf.Fatal("Endpoint is empty. Make sure to set it.")
+	}
+
 	entries, err := cachedentries.GetEntries()
 	if err != nil {
 		log.Printf("Failed to get entries: %s", err)
