@@ -12,10 +12,16 @@ func init() {
 }
 
 func run() {
+	query := wf.Args()[0]
 	entries := cachedentries.GetEntries()
 	for _, entry := range entries {
 		wf.NewItem(entry.Name)
 	}
+
+	if query != "" {
+		wf.Filter(query)
+	}
+
 	wf.WarnEmpty("No matching items", "Try something different")
 	wf.SendFeedback()
 }
