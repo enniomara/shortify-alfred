@@ -3,7 +3,6 @@ package cachedentries
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -11,10 +10,10 @@ type entry struct {
 	Name string
 }
 
-func GetEntries() []entry {
+func GetEntries() ([]entry, error) {
 	jsonFile, err := os.Open("entries.json")
 	if err != nil {
-		log.Fatalf("Error when opening jsonfile: %s", err)
+		return nil, err
 	}
 	defer jsonFile.Close()
 
@@ -23,5 +22,9 @@ func GetEntries() []entry {
 	var entries []entry
 
 	err = json.Unmarshal(byteValue, &entries)
-	return entries
+	if err != nil {
+		return nil, err
+	}
+
+	return entries, nil
 }

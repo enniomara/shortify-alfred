@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	aw "github.com/deanishe/awgo"
 	"github.com/enniomara/shortify-alfred/cachedentries"
 )
@@ -13,7 +15,12 @@ func init() {
 
 func run() {
 	query := wf.Args()[0]
-	entries := cachedentries.GetEntries()
+	entries, err := cachedentries.GetEntries()
+	if err != nil {
+		log.Printf("Failed to get entries: %s", err)
+		wf.Fatal("Failed to get entries from cache")
+	}
+
 	for _, entry := range entries {
 		wf.NewItem(entry.Name)
 	}
