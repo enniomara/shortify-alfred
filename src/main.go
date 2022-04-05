@@ -5,14 +5,24 @@ import (
 
 	aw "github.com/deanishe/awgo"
 	"github.com/enniomara/shortify-alfred/actions"
+	"github.com/enniomara/shortify-alfred/api"
 	"github.com/enniomara/shortify-alfred/cachedentries"
 )
 
 var wf *aw.Workflow
 
 func init() {
+	config := aw.NewConfig()
 	updateMagic := aw.AddMagic(actions.NewUpdateAction(func() error {
-		log.Printf("Running from main")
+		apiEntries, err := api.GetEntries(config.Get("shortify_url"))
+		if err != nil {
+			return err
+		}
+
+		err = cachedentries.SaveEntries(apiEntries)
+		if err != nil {
+			return nil
+		}
 		return nil
 	}))
 
