@@ -4,9 +4,10 @@ import (
 	"log"
 
 	aw "github.com/deanishe/awgo"
-	"github.com/enniomara/shortify-alfred/actions"
-	"github.com/enniomara/shortify-alfred/api"
-	"github.com/enniomara/shortify-alfred/cachedentries"
+
+	"github.com/enniomara/shortify-alfred/internal/actions"
+	"github.com/enniomara/shortify-alfred/internal/api"
+	"github.com/enniomara/shortify-alfred/internal/cachedentries"
 )
 
 var wf *aw.Workflow

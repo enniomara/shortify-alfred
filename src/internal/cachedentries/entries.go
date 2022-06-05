@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"os"
-	"github.com/enniomara/shortify-alfred/api"
+	"github.com/enniomara/shortify-alfred/internal/api"
 )
 
 type entry struct {
