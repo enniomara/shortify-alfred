@@ -7,7 +7,6 @@ import (
 
 	aw "github.com/deanishe/awgo"
 
-	"github.com/enniomara/shortify-alfred/internal/actions"
 	"github.com/enniomara/shortify-alfred/internal/api"
 	"github.com/enniomara/shortify-alfred/internal/cachedentries"
 	"github.com/enniomara/shortify-alfred/internal/config"
@@ -28,20 +27,7 @@ func init() {
 	flag.BoolVar(&configMode, "config", false, "")
 	flag.Parse()
 
-	updateMagic := aw.AddMagic(actions.NewUpdateAction(func() error {
-		apiEntries, err := api.GetEntries(endpoint)
-		if err != nil {
-			return err
-		}
-
-		err = cachedentries.SaveEntries(apiEntries)
-		if err != nil {
-			return nil
-		}
-		return nil
-	}))
-
-	wf = aw.New(updateMagic)
+	wf = aw.New()
 	configHandler = config.NewConfigHandler(wf)
 }
 
@@ -65,6 +51,11 @@ func run() {
 		wf.Fatal("Failed to get entries from cache")
 	}
 
+	if len(entries) == 0 {
+		wf.Warn("No entries found, updating. Please try again", "")
+		updateEntries(configHandler.GetURL())
+	}
+
 	for _, entry := range entries {
 		wf.NewItem(entry.Name).Valid(true).Arg(fmt.Sprintf("%s/%s", endpointUrl, entry.Name))
 	}
@@ -79,4 +70,18 @@ func run() {
 
 func main() {
 	wf.Run(run)
+}
+
+// Downloads entries from shortify and saves them to a cache
+func updateEntries(endpoint string) error {
+	apiEntries, err := api.GetEntries(endpoint)
+	if err != nil {
+		return err
+	}
+
+	err = cachedentries.SaveEntries(apiEntries)
+	if err != nil {
+		return nil
+	}
+	return nil
 }
