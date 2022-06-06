@@ -2,8 +2,10 @@ package cachedentries
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"os"
+
 	"github.com/enniomara/shortify-alfred/internal/api"
 )
 
@@ -14,6 +16,10 @@ type entry struct {
 func GetEntries() ([]entry, error) {
 	jsonFile, err := os.Open("entries.json")
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return []entry{}, nil
+		}
+
 		return nil, err
 	}
 	defer jsonFile.Close()
@@ -48,7 +54,7 @@ func SaveEntries(apiEntries []api.Entry) error {
 		return err
 	}
 
-    return nil
+	return nil
 }
 
 func fromApiEntry(apiEntries []api.Entry) []entry {
