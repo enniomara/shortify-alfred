@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	aw "github.com/deanishe/awgo"
@@ -8,12 +9,24 @@ import (
 	"github.com/enniomara/shortify-alfred/internal/actions"
 	"github.com/enniomara/shortify-alfred/internal/api"
 	"github.com/enniomara/shortify-alfred/internal/cachedentries"
+	"github.com/enniomara/shortify-alfred/internal/config"
 )
 
 var wf *aw.Workflow
 var endpoint string
+var (
+	setKey        string
+	getKey        string
+	configMode    bool
+	configHandler config.ConfigHandler
+)
 
 func init() {
+	flag.StringVar(&setKey, "set", "", "")
+	flag.StringVar(&getKey, "get", "", "")
+	flag.BoolVar(&configMode, "config", false, "")
+	flag.Parse()
+
 	updateMagic := aw.AddMagic(actions.NewUpdateAction(func() error {
 		apiEntries, err := api.GetEntries(endpoint)
 		if err != nil {
@@ -28,10 +41,17 @@ func init() {
 	}))
 
 	wf = aw.New(updateMagic)
+	configHandler = config.NewConfigHandler(wf)
 }
 
 func run() {
-	query := wf.Args()[0]
+	wf.Args()
+	query := flag.Arg(0)
+
+	if configMode {
+		// handle case when configuration mode is entered
+		configHandler.Handle(setKey, getKey, query)
+	}
 
 	config := aw.NewConfig()
 	endpointUrl := config.Get("shortify_url")
