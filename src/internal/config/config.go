@@ -48,6 +48,7 @@ func (config *ConfigHandler) Handle(setKey, getKey, query string) {
 				Arg(query).
 				Subtitle("↩ to save")
 		}
+		config.wf.SendFeedback()
 		return
 	}
 
