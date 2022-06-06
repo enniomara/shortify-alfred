@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	aw "github.com/deanishe/awgo"
@@ -53,8 +54,7 @@ func run() {
 		configHandler.Handle(setKey, getKey, query)
 	}
 
-	config := aw.NewConfig()
-	endpointUrl := config.Get("shortify_url")
+	endpointUrl := configHandler.GetURL()
 	if endpointUrl == "" {
 		wf.Fatal("Endpoint is empty. Make sure to set it.")
 	}
@@ -66,7 +66,7 @@ func run() {
 	}
 
 	for _, entry := range entries {
-		wf.NewItem(entry.Name)
+		wf.NewItem(entry.Name).Valid(true).Arg(fmt.Sprintf("%s/%s", endpointUrl, entry.Name))
 	}
 
 	if query != "" {

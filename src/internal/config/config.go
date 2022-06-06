@@ -73,3 +73,7 @@ func (config *ConfigHandler) ShowItems() {
 		Autocomplete("url").
 		Subtitle("↩ to edit")
 }
+
+func (config ConfigHandler) GetURL() string {
+	return config.config.Url
+}
