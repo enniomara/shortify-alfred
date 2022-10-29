@@ -38,6 +38,7 @@ func run() {
 	if configMode {
 		// handle case when configuration mode is entered
 		configHandler.Handle(setKey, getKey, query)
+		return
 	}
 
 	endpointUrl := configHandler.GetURL()
