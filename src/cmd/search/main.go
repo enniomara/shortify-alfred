@@ -15,15 +15,15 @@ import (
 var wf *aw.Workflow
 var endpoint string
 var (
-	setKey        string
-	getKey        string
-	configMode    bool
-	configHandler config.ConfigHandler
+	setKey           string
+	configItemToEdit string
+	configMode       bool
+	configHandler    config.ConfigHandler
 )
 
 func init() {
 	flag.StringVar(&setKey, "set", "", "")
-	flag.StringVar(&getKey, "get", "", "")
+	flag.StringVar(&configItemToEdit, "edit", "", "")
 	flag.BoolVar(&configMode, "config", false, "")
 	flag.Parse()
 
@@ -37,7 +37,7 @@ func run() {
 
 	if configMode {
 		// handle case when configuration mode is entered
-		configHandler.Handle(setKey, getKey, query)
+		configHandler.Handle(setKey, configItemToEdit, query)
 		return
 	}
 

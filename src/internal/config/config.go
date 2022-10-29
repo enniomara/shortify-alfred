@@ -31,7 +31,7 @@ func NewConfigHandler(wf *aw.Workflow) ConfigHandler {
 
 // Handle handles the configuration GUI, i.e. setting and getting of config
 // variables
-func (config *ConfigHandler) Handle(setKey, getKey, query string) {
+func (config *ConfigHandler) Handle(setKey, itemToEdit, query string) {
 	// we want to save configuration for a key (done after editing)
 	if setKey != "" {
 		config.Set(setKey, query)
@@ -39,10 +39,10 @@ func (config *ConfigHandler) Handle(setKey, getKey, query string) {
 	}
 
 	// we want to edit configuration for a key
-	if getKey != "" {
+	if itemToEdit != "" {
 		if query != "" {
 			config.wf.
-				NewItem(fmt.Sprintf("Set %s to \"%s\"", getKey, query)).
+				NewItem(fmt.Sprintf("Set %s to \"%s\"", itemToEdit, query)).
 				Valid(true).
 				Var("value", query).
 				Arg(query).
