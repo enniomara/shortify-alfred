@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"log"
+	"net/url"
 
 	aw "github.com/deanishe/awgo"
 )
@@ -59,9 +59,17 @@ func (config *ConfigHandler) Handle(setKey, getKey, query string) {
 
 // Set the given configuration key to a value
 func (config *ConfigHandler) Set(key string, value string) {
-	log.Printf("Modifying %s to %s", key, value)
-	if err := config.wf.Config.Set(key, value, false).Do(); err != nil {
-		config.wf.FatalError(err)
+	if key == "url" {
+		_, err := url.ParseRequestURI(value)
+		if err != nil {
+			config.wf.Fatal("URL was invalid. Please enter a valid url.")
+			return
+		}
+
+		if err := config.wf.Config.Set(key, value, false).Do(); err != nil {
+			config.wf.FatalError(err)
+			return
+		}
 	}
 }
 
