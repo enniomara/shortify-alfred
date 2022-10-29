@@ -69,6 +69,9 @@ func (config *ConfigHandler) Set(key string, value string) {
 func (config *ConfigHandler) ShowItems() {
 	config.wf.NewItem(fmt.Sprintf("Url: %s", config.config.Url)).
 		Var("name", "url").
+		// when the action is clicked, the input field will contain the old
+		// URL, so that editing is easy
+		Arg(config.config.Url).
 		Valid(true).
 		Autocomplete("url").
 		Subtitle("↩ to edit")
