@@ -15,15 +15,15 @@ import (
 var wf *aw.Workflow
 var endpoint string
 var (
-	setKey        string
-	getKey        string
-	configMode    bool
-	configHandler config.ConfigHandler
+	setKey           string
+	configItemToEdit string
+	configMode       bool
+	configHandler    config.ConfigHandler
 )
 
 func init() {
 	flag.StringVar(&setKey, "set", "", "")
-	flag.StringVar(&getKey, "get", "", "")
+	flag.StringVar(&configItemToEdit, "edit", "", "")
 	flag.BoolVar(&configMode, "config", false, "")
 	flag.Parse()
 
@@ -37,7 +37,8 @@ func run() {
 
 	if configMode {
 		// handle case when configuration mode is entered
-		configHandler.Handle(setKey, getKey, query)
+		configHandler.Handle(setKey, configItemToEdit, query)
+		return
 	}
 
 	endpointUrl := configHandler.GetURL()
@@ -52,8 +53,19 @@ func run() {
 	}
 
 	if len(entries) == 0 {
-		wf.Warn("No entries found, updating. Please try again", "")
-		updateEntries(configHandler.GetURL())
+		err := updateEntries(configHandler.GetURL())
+		if err != nil {
+			log.Printf("Error while updating entries: %s", err)
+			wf.Fatal("Failed to update entries")
+			wf.SendFeedback()
+		}
+
+		// the entries have been updated, we need to update them
+		entries, err = cachedentries.GetEntries()
+		if err != nil {
+			log.Printf("Failed to get entries: %s", err)
+			wf.Fatal("Failed to get entries from cache")
+		}
 	}
 
 	for _, entry := range entries {
