@@ -46,7 +46,7 @@ func run() {
 		wf.Fatal("Endpoint is empty. Make sure to set it.")
 	}
 
-	cachedEntries := cachedentries.NewFsStorage()
+	cachedEntries := cachedentries.NewAlfredCacheStorage(*wf.Cache)
 	entries, err := cachedEntries.GetEntries()
 	if err != nil {
 		log.Printf("Failed to get entries: %s", err)
