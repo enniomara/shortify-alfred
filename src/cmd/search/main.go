@@ -46,14 +46,15 @@ func run() {
 		wf.Fatal("Endpoint is empty. Make sure to set it.")
 	}
 
-	entries, err := cachedentries.GetEntries()
+	cachedEntries := cachedentries.NewFsStorage()
+	entries, err := cachedEntries.GetEntries()
 	if err != nil {
 		log.Printf("Failed to get entries: %s", err)
 		wf.Fatal("Failed to get entries from cache")
 	}
 
 	if len(entries) == 0 {
-		err := updateEntries(configHandler.GetURL())
+		err := updateEntries(configHandler.GetURL(), cachedEntries)
 		if err != nil {
 			log.Printf("Error while updating entries: %s", err)
 			wf.Fatal("Failed to update entries")
@@ -61,7 +62,7 @@ func run() {
 		}
 
 		// the entries have been updated, we need to update them
-		entries, err = cachedentries.GetEntries()
+		entries, err = cachedEntries.GetEntries()
 		if err != nil {
 			log.Printf("Failed to get entries: %s", err)
 			wf.Fatal("Failed to get entries from cache")
@@ -85,13 +86,13 @@ func main() {
 }
 
 // Downloads entries from shortify and saves them to a cache
-func updateEntries(endpoint string) error {
+func updateEntries(endpoint string, cachedEntries cachedentries.CachedEntries) error {
 	apiEntries, err := api.GetEntries(endpoint)
 	if err != nil {
 		return err
 	}
 
-	err = cachedentries.SaveEntries(apiEntries)
+	err = cachedEntries.SaveEntries(apiEntries)
 	if err != nil {
 		return nil
 	}

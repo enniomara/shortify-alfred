@@ -13,7 +13,18 @@ type entry struct {
 	Name string `json:"name"`
 }
 
-func GetEntries() ([]entry, error) {
+type CachedEntries interface {
+	GetEntries() ([]entry, error)
+	SaveEntries([]api.Entry) error
+}
+
+func NewFsStorage() CachedEntries {
+	return fsStorage{}
+}
+
+type fsStorage struct {}
+
+func (s fsStorage) GetEntries() ([]entry, error) {
 	jsonFile, err := os.Open("entries.json")
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -36,7 +47,7 @@ func GetEntries() ([]entry, error) {
 	return entries, nil
 }
 
-func SaveEntries(apiEntries []api.Entry) error {
+func (s fsStorage) SaveEntries(apiEntries []api.Entry) error {
 	entries := fromApiEntry(apiEntries)
 	marshaledOutput, err := json.Marshal(entries)
 	if err != nil {
