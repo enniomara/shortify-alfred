@@ -53,8 +53,19 @@ func run() {
 	}
 
 	if len(entries) == 0 {
-		wf.Warn("No entries found, updating. Please try again", "")
-		updateEntries(configHandler.GetURL())
+		err := updateEntries(configHandler.GetURL())
+		if err != nil {
+			log.Printf("Error while updating entries: %s", err)
+			wf.Fatal("Failed to update entries")
+			wf.SendFeedback()
+		}
+
+		// the entries have been updated, we need to update them
+		entries, err = cachedentries.GetEntries()
+		if err != nil {
+			log.Printf("Failed to get entries: %s", err)
+			wf.Fatal("Failed to get entries from cache")
+		}
 	}
 
 	for _, entry := range entries {
