@@ -13,9 +13,6 @@ Install it by downloading the `.workflow` file from the
 
 ## Initialization
 
-1. Change the `shortify_url` environment variable by using the Alfred GUI. Set
-it to the shortify URL (e.g. `https://shortify.example.org`).
+1. Run `sh-settings` to set the Shortify endpoint URL.
 
-2. Run `sh-update` to retrieve the entries from the service.
-
-3. Run `sh` to list the saved entries.
+2. Run `sh` to list the saved entries. Press enter and you will be directed to the url.
