@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
+	"net/url"
 
 	aw "github.com/deanishe/awgo"
 
@@ -41,8 +41,8 @@ func run() {
 		return
 	}
 
-	endpointUrl := configHandler.GetURL()
-	if endpointUrl == "" {
+	endpointUrl, err := configHandler.GetURL()
+	if err != nil {
 		wf.Fatal("Configure API endpoint by running `sh-settings`.")
 	}
 
@@ -54,7 +54,7 @@ func run() {
 	}
 
 	if len(entries) == 0 {
-		err := updateEntries(configHandler.GetURL(), cachedEntries)
+		err := updateEntries(endpointUrl, cachedEntries)
 		if err != nil {
 			log.Printf("Error while updating entries: %s", err)
 			wf.Fatal("Failed to update entries")
@@ -70,7 +70,12 @@ func run() {
 	}
 
 	for _, entry := range entries {
-		wf.NewItem(entry.Name).Valid(true).Arg(fmt.Sprintf("%s/%s", endpointUrl, entry.Name))
+		ref, err := url.Parse(entry.Name)
+		if err != nil {
+			log.Printf("Failed to parse entry as URL: %s", err)
+			wf.Fatal("Unknown error while parsing entry")
+		}
+		wf.NewItem(entry.Name).Valid(true).Arg(endpointUrl.ResolveReference(ref).String())
 	}
 
 	if query != "" {
@@ -86,7 +91,7 @@ func main() {
 }
 
 // Downloads entries from shortify and saves them to a cache
-func updateEntries(endpoint string, cachedEntries cachedentries.CachedEntries) error {
+func updateEntries(endpoint *url.URL, cachedEntries cachedentries.CachedEntries) error {
 	apiEntries, err := api.GetEntries(endpoint)
 	if err != nil {
 		return err

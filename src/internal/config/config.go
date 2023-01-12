@@ -85,6 +85,11 @@ func (config *ConfigHandler) ShowItems() {
 		Subtitle("↩ to edit")
 }
 
-func (config ConfigHandler) GetURL() string {
-	return config.config.Url
+func (config ConfigHandler) GetURL() (*url.URL, error) {
+	u, err := url.Parse(config.config.Url);
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
 }
