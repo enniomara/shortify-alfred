@@ -43,7 +43,7 @@ func run() {
 
 	endpointUrl := configHandler.GetURL()
 	if endpointUrl == "" {
-		wf.Fatal("Endpoint is empty. Make sure to set it.")
+		wf.Fatal("Configure API endpoint by running `sh-settings`.")
 	}
 
 	cachedEntries := cachedentries.NewAlfredCacheStorage(*wf.Cache)
