@@ -21,6 +21,11 @@ var (
 	configHandler    config.ConfigHandler
 )
 
+type Endpoint interface {
+	GetEntries() ([]api.Entry, error)
+	UrlOf(string) *url.URL
+}
+
 func init() {
 	flag.StringVar(&setKey, "set", "", "")
 	flag.StringVar(&configItemToEdit, "edit", "", "")
@@ -45,6 +50,7 @@ func run() {
 	if err != nil {
 		wf.Fatal("Configure API endpoint by running `sh-settings`.")
 	}
+	endpoint := api.EndpointFromUrl(endpointUrl)
 
 	cachedEntries := cachedentries.NewAlfredCacheStorage(*wf.Cache)
 	entries, err := cachedEntries.GetEntries()
@@ -54,7 +60,7 @@ func run() {
 	}
 
 	if len(entries) == 0 {
-		err := updateEntries(endpointUrl, cachedEntries)
+		err := updateEntries(endpoint, cachedEntries)
 		if err != nil {
 			log.Printf("Error while updating entries: %s", err)
 			wf.Fatal("Failed to update entries")
@@ -70,12 +76,7 @@ func run() {
 	}
 
 	for _, entry := range entries {
-		ref, err := url.Parse(entry.Name)
-		if err != nil {
-			log.Printf("Failed to parse entry as URL: %s", err)
-			wf.Fatal("Unknown error while parsing entry")
-		}
-		wf.NewItem(entry.Name).Valid(true).Arg(endpointUrl.ResolveReference(ref).String())
+		wf.NewItem(entry.Name).Valid(true).Arg(endpoint.UrlOf(entry.Name).String())
 	}
 
 	if query != "" {
@@ -91,8 +92,8 @@ func main() {
 }
 
 // Downloads entries from shortify and saves them to a cache
-func updateEntries(endpoint *url.URL, cachedEntries cachedentries.CachedEntries) error {
-	apiEntries, err := api.GetEntries(endpoint)
+func updateEntries(endpoint Endpoint, cachedEntries cachedentries.CachedEntries) error {
+	apiEntries, err := endpoint.GetEntries()
 	if err != nil {
 		return err
 	}

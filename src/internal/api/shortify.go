@@ -12,14 +12,18 @@ type Entry struct {
 	Name string `json:"name"`
 }
 
-func GetEntries(endpoint *url.URL) ([]Entry, error) {
-	ref, err := url.Parse("_entries")
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
+func EndpointFromUrl(url *url.URL) endpoint {
+	return endpoint{url}
+}
 
-	entriesUrl := endpoint.ResolveReference(ref)
+type endpoint struct {
+	*url.URL
+}
+
+func (e endpoint) GetEntries() ([]Entry, error) {
+	ref, _ := url.Parse("_entries")
+
+	entriesUrl := e.ResolveReference(ref)
 	resp, err := http.Get(entriesUrl.String())
 	if err != nil {
 		log.Print(err)
@@ -38,4 +42,11 @@ func GetEntries(endpoint *url.URL) ([]Entry, error) {
 		return nil, err
 	}
 	return entries, nil
+
+}
+
+func (e endpoint) UrlOf(entryName string) *url.URL {
+	ref, _ := url.Parse(entryName)
+
+	return e.ResolveReference(ref)
 }
